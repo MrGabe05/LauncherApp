@@ -13,6 +13,7 @@ TODO
 6. pressing 0246  allows box settings to popup so people can access wifi area and box settings. 
 7. a nice UI
 8. possible support apple devices
+9. possible future remote launcher update via app/web.
    
 CURRENT FEATURES
 launches on every system booting
