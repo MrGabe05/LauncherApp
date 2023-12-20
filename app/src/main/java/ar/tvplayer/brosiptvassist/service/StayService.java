@@ -27,23 +27,20 @@ import ar.tvplayer.brosiptvassist.R;
 
 public class StayService extends Service {
 
-
     private Looper scheduleMonitorLooper = null;
     private ScheduleMonitor scheduleMonitor = null;
 
     @Override
     public void onCreate() {
-
-        HandlerThread thread = new HandlerThread("ScheduleMonitorStartArguments",
-                Process.THREAD_PRIORITY_BACKGROUND);
+        HandlerThread thread = new HandlerThread("ScheduleMonitorStartArguments", Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
+
         scheduleMonitorLooper = thread.getLooper();
         scheduleMonitor = new ScheduleMonitor(scheduleMonitorLooper);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         Message msg = scheduleMonitor.obtainMessage();
         msg.arg1 = startId;
         scheduleMonitor.sendMessage(msg);
@@ -53,9 +50,7 @@ public class StayService extends Service {
 
     //gets current date as string
     private String getCurrentDateString() {
-        Instant instant = null;
-        instant = Instant.now();
-        return instant.toString();
+        return Instant.now().toString();
     }
 
     //gets date integer
@@ -93,12 +88,8 @@ public class StayService extends Service {
 //            e.printStackTrace();
 //        }
 
-        CacheManager.clearCacheForApp(
-                getApplicationContext(),
-                getResources().getString(R.string.target_app));
-        CacheManager.clearCacheForApp(
-                getApplicationContext(),
-                getResources().getString(R.string.origin_app));
+        CacheManager.clearCacheForApp(getApplicationContext(), getResources().getString(R.string.target_app));
+        CacheManager.clearCacheForApp(getApplicationContext(), getResources().getString(R.string.origin_app));
     }
 
     //restarts target app
@@ -124,29 +115,28 @@ public class StayService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-                if (getCurrentDateInt(getCurrentDateString()) % 3 == 0) {
-                    if (Objects.equals(getCurrentTimeString(getCurrentDateString()), "00:00:00") ||
-                            Objects.equals(getCurrentTimeString(getCurrentDateString()), "00:00:01")) {
-                        clearMemoryCache();
-                        showToast(getResources().getString(R.string.memory_cached));
-                    }
-                }
-
-                if (!Helper.isTargetRunning(getApplicationContext(), getResources().getString(R.string.target_app))) {
+            if (getCurrentDateInt(getCurrentDateString()) % 3 == 0) {
+                if (Objects.equals(getCurrentTimeString(getCurrentDateString()), "00:00:00") ||
+                        Objects.equals(getCurrentTimeString(getCurrentDateString()), "00:00:01")) {
                     clearMemoryCache();
-                    restartTargetApp();
-                } else {
-                    showToast(getResources().getString(R.string.already_running));
+                    showToast(getResources().getString(R.string.memory_cached));
                 }
+            }
 
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ie) {
-                    showToast(getResources().getString(R.string.unable_delay));
-                }
+            if (!Helper.isTargetRunning(getApplicationContext(), getResources().getString(R.string.target_app))) {
+                clearMemoryCache();
+                restartTargetApp();
+            } else {
+                showToast(getResources().getString(R.string.already_running));
+            }
 
-                handleMessage(msg);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException ie) {
+                showToast(getResources().getString(R.string.unable_delay));
+            }
 
+            handleMessage(msg);
         }
     }
 

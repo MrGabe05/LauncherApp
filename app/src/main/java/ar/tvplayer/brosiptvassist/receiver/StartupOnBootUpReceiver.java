@@ -5,15 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import java.lang.reflect.Method;
-
 import ar.tvplayer.brosiptvassist.MainActivity;
 
 public class StartupOnBootUpReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             Toast.makeText(context.getApplicationContext(), "System has been booted up", Toast.LENGTH_LONG).show();
             Intent activityIntent = new Intent(context.getApplicationContext(), MainActivity.class);

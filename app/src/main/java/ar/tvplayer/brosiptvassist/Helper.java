@@ -7,6 +7,7 @@ import android.widget.Toast;
 import java.util.List;
 
 public class Helper {
+
     public static boolean isTargetRunning(final Context context, final String packageName) {
         final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();

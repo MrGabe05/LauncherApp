@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import java.io.File;
+import java.util.Objects;
 
 public class CacheManager {
-
 
     // Clear the cache for a specific app
     public static void clearCacheForApp(Context context, String packageName) {
@@ -42,17 +42,21 @@ public class CacheManager {
 
     // Recursively delete a directory and its contents
     private static void deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (String child : children) {
-                File childFile = new File(dir, child);
-                if (childFile.isDirectory()) {
-                    deleteDir(childFile);
-                } else {
-                    childFile.delete();
+        if(dir.exists()) {
+            if (dir.isDirectory()) {
+                String[] children = dir.list();
+                for (String child : Objects.requireNonNull(children)) {
+                    File childFile = new File(dir, child);
+                    if (childFile.exists()) {
+                        if (childFile.isDirectory()) {
+                            deleteDir(childFile);
+                        } else {
+                            childFile.delete();
+                        }
+                    }
                 }
             }
+            dir.delete();
         }
-        dir.delete();
     }
 }
