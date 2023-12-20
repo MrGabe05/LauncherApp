@@ -10,6 +10,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.EnumSet;
 
 public class DeleteDirectoryContents {
+
     public static void emptyDirectory(Path directoryPath) throws IOException {
         if (Files.exists(directoryPath) && Files.isDirectory(directoryPath)) {
             // EnumSet ensures that symbolic links are not followed
