@@ -5,38 +5,37 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.KeyEvent;
 
 public class BoxSettingsReceiver extends BroadcastReceiver {
 
-    private static final String CONFIGURATION_SEQUENCE = "1111111";
-    private static final int CONFIGURATION_TRIGGER_COUNT = 7;
-    private int sequenceCount = 0;
+    private static StringBuilder inputSequence = new StringBuilder();
     private final Handler timerHandler = new Handler(Looper.getMainLooper());
-    private final Runnable resetSequenceRunnable = () -> sequenceCount = 0;
+    private final Runnable timeoutRunnable = () -> inputSequence = new StringBuilder();
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
             KeyEvent event = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            if (event != null && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if(event == null) return;
+
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 int keyCode = event.getKeyCode();
 
-                if (keyCode == KeyEvent.KEYCODE_1) {
-                    timerHandler.removeCallbacks(resetSequenceRunnable);
-                    timerHandler.postDelayed(resetSequenceRunnable, 2000);
+                if ((keyCode - KeyEvent.KEYCODE_1) == 2) {
+                    openDeviceSettings(context);
 
-                    if (CONFIGURATION_SEQUENCE.charAt(sequenceCount) == '1') {
-                        sequenceCount++;
-                        if (sequenceCount == CONFIGURATION_TRIGGER_COUNT) {
-                            openDeviceSettings(context);
-                            sequenceCount = 0;
-                        }
-                    } else {
-                        sequenceCount = 0;
-                    }
-                } else {
-                    sequenceCount = 0;
+                    inputSequence.append("2");
+
+                    timerHandler.removeCallbacks(timeoutRunnable);
+                    timerHandler.postDelayed(timeoutRunnable, 3000);
+                }
+
+                if (inputSequence.toString().equals("2222222")) {
+                    openDeviceSettings(context);
+
+                    resetInputSequence();
                 }
             }
         }
@@ -46,5 +45,9 @@ public class BoxSettingsReceiver extends BroadcastReceiver {
         Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static void resetInputSequence() {
+        inputSequence = new StringBuilder();
     }
 }
